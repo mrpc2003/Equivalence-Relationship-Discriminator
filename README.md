@@ -45,11 +45,11 @@ pip install -r requirements.txt
 아키텍처 다이어그램 (Mermaid)
 ```mermaid
 graph TD
-  U[User] --> M[main.py]
+  U[사용자] --> M[main.py]
   M --> R[relations.py]
   M --> P[pretty.py]
 
-  subgraph REL [relations.py]
+  subgraph REL [관계 모듈 relations.py]
     IR[is_reflexive]
     IS[is_symmetric]
     IT[is_transitive]
@@ -62,10 +62,10 @@ graph TD
     CLS[equivalence_classes]
   end
 
-  subgraph PRETTY [pretty.py]
-    FM[format_matrix]
-    FP[format_pairs]
-    DG[draw_graph]
+  subgraph PRETTY [출력/시각화 pretty.py]
+    FM[행렬 포맷]
+    FP[관계쌍 포맷]
+    DG[그래프 저장]
   end
 
   M --> IE
@@ -86,37 +86,37 @@ graph TD
 런타임 흐름 (Mermaid)
 ```mermaid
 flowchart TD
-  A[Start main.py] --> B{Mode select};
-  B -->|Manual| C[input_matrix + parse_row];
-  B -->|Example| C2[load_example];
+  A[main.py 시작] --> B{모드 선택};
+  B -->|수동 입력| C[행렬 입력 및 파싱];
+  B -->|예제| C2[예제 불러오기];
 
-  C --> D[Print original R];
+  C --> D[원본 R 출력];
   C2 --> D;
 
-  D --> E[print_properties to is_equivalence];
-  E -->|Equivalent| F[Print equivalence_classes];
-  E -->|Not equivalent| G{Missing properties?};
+  D --> E[성질 판별 is_equivalence];
+  E -->|동치| F[동치류 출력];
+  E -->|비동치| G{결여 성질 있음?};
 
-  G -->|Reflexive| H1[reflexive_closure -> compare and recheck];
-  G -->|Symmetric| H2[symmetric_closure -> compare and recheck];
-  G -->|Transitive| H3[transitive_closure -> compare and recheck];
+  G -->|반사| H1[반사 폐포 비교 및 재판별];
+  G -->|대칭| H2[대칭 폐포 비교 및 재판별];
+  G -->|추이| H3[추이 폐포 비교 및 재판별];
 
-  H1 --> I{Run equivalence closure?};
+  H1 --> I{동치 폐포 실행?};
   H2 --> I;
   H3 --> I;
 
-  I -->|Yes| J[equivalence_closure -> compare and recheck];
-  I -->|No| K[End];
+  I -->|예| J[동치 폐포 비교 및 재판별];
+  I -->|아니오| K[종료];
 
-  J --> L[Print equivalence classes];
+  J --> L[동치류 출력];
   L --> K;
 
-  D -.-> M[format_matrix and format_pairs];
+  D -.-> M[행렬·관계쌍 포맷];
   H1 -.-> M;
   H2 -.-> M;
   H3 -.-> M;
   J -.-> M;
-  D -.-> N[draw_graph optional];
+  D -.-> N[그래프 저장 옵션];
   H1 -.-> N;
   H2 -.-> N;
   H3 -.-> N;
@@ -126,28 +126,28 @@ flowchart TD
 시퀀스 다이어그램 (Mermaid)
 ```mermaid
 sequenceDiagram
-  participant U as User
+  participant U as 사용자
   participant M as main.py
   participant R as relations.py
   participant P as pretty.py
 
-  U->>M: select mode / graph option / input
-  M->>M: input_matrix | load_example
-  M->>P: format_matrix + format_pairs (print original R)
-  M->>R: is_equivalence (calls is_reflexive/is_symmetric/is_transitive)
-  alt Equivalent
-    M->>R: equivalence_classes
-    M->>U: print classes
-  else Not equivalent
-    par For each missing property
-      M->>R: reflexive/symmetric/transitive_closure
-      M->>P: show before/after, highlight added pairs
-      M->>R: re-check is_equivalence
+  U->>M: 모드 선택 / 그래프 옵션 / 입력
+  M->>M: 수동 입력 또는 예제 불러오기
+  M->>P: 원본 R 출력(행렬/관계쌍)
+  M->>R: 동치 판별 호출(세 성질 검사)
+  alt 동치
+    M->>R: 동치류 계산
+    M->>U: 동치류 출력
+  else 비동치
+    par 결여 성질별 처리
+      M->>R: 반사/대칭/추이 폐포
+      M->>P: 변환 전후 비교, 추가 쌍 강조
+      M->>R: 재판별 수행
     end
-    opt Equivalence closure
-      M->>R: equivalence_closure
-      M->>P: show before/after (graph optional)
-      M->>R: is_equivalence / equivalence_classes
+    opt 동치 폐포
+      M->>R: 동치 폐포 적용
+      M->>P: 변환 전후 출력(그래프는 선택)
+      M->>R: 재판별 및 동치류 계산
     end
   end
 ```
