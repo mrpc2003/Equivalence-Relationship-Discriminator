@@ -31,6 +31,130 @@ pip install -r requirements.txt
 6) 동치 폐포(선택): 한 번에 동치 폐포를 생성해 전/후 비교 및 동치류 출력
 
 
+### 아키텍처/코드 구조
+
+모듈 구성
+- `main.py`: CLI 오케스트레이션(입력/검증/출력), 성질 판별 호출, 폐포 처리, 그래프 옵션 처리
+- `relations.py`: 반사/대칭/추이 판별, 각 폐포, 동치 폐포, 관계쌍 변환, 동치류 계산
+- `pretty.py`: 행렬/관계쌍 포맷 및 그래프 시각화(선택)
+
+데이터 모델
+- `Matrix = List[List[int]]`
+- `ELEMENTS = [1,2,3,4,5]`, `N = len(ELEMENTS)`
+
+아키텍처 다이어그램 (Mermaid)
+```mermaid
+graph TD
+  U[User] --> M[main.py]
+  M -->|calls| R[relations.py]
+  M -->|calls| P[pretty.py]
+
+  subgraph relations.py
+    IR[is_reflexive]
+    IS[is_symmetric]
+    IT[is_transitive]
+    IE[is_equivalence]
+    RC[reflexive_closure]
+    SC[symmetric_closure]
+    TC[transitive_closure]
+    EC[equivalence_closure]
+    TP[to_pairs]
+    CLS[equivalence_classes]
+  end
+
+  subgraph pretty.py
+    FM[format_matrix]
+    FP[format_pairs]
+    DG[draw_graph (optional)]
+  end
+
+  M --> IE
+  IE --> IR
+  IE --> IS
+  IE --> IT
+
+  M --> RC
+  M --> SC
+  M --> TC
+  M --> EC
+
+  M --> FM
+  M --> FP
+  M --> DG
+```
+
+런타임 흐름 (Mermaid)
+```mermaid
+flowchart TD
+  A[Start main.py] --> B{모드 선택}
+  B -->|수동 입력| C[input_matrix + parse_row]
+  B -->|예제| C2[load_example(even/non_equiv)]
+
+  C --> D[원본 R 출력]
+  C2 --> D
+
+  D --> E[print_properties → is_equivalence]
+  E -->|동치| F[동치류 출력: equivalence_classes]
+  E -->|비동치| G{결여 성질?}
+
+  G -->|반사 X| H1[reflexive_closure → 전/후 비교/재판별]
+  G -->|대칭 X| H2[symmetric_closure → 전/후 비교/재판별]
+  G -->|추이 X| H3[transitive_closure → 전/후 비교/재판별]
+
+  H1 --> I{동치 폐포 실행?}
+  H2 --> I
+  H3 --> I
+
+  I -->|예| J[equivalence_closure → 전/후 비교/재판별]
+  I -->|아니오| K[End]
+
+  J --> L[동치류 출력]
+  L --> K
+
+  %% 출력 보조
+  D -.-> M[format_matrix/format_pairs]
+  H1 -.-> M
+  H2 -.-> M
+  H3 -.-> M
+  J  -.-> M
+  D ==>|옵션| N[draw_graph 저장]
+  H1 ==>|옵션| N
+  H2 ==>|옵션| N
+  H3 ==>|옵션| N
+  J  ==>|옵션| N
+```
+
+시퀀스 다이어그램 (Mermaid)
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant M as main.py
+  participant R as relations.py
+  participant P as pretty.py
+
+  U->>M: 모드/그래프 옵션/입력
+  M->>M: input_matrix | load_example
+  M->>P: format_matrix/format_pairs (원본 R 출력)
+  M->>R: is_equivalence (→ is_reflexive/is_symmetric/is_transitive)
+  alt 동치
+    M->>R: equivalence_classes
+    M->>U: 동치류 출력
+  else 비동치
+    par 결여 성질별
+      M->>R: reflexive/symmetric/transitive_closure
+      M->>P: format_matrix/format_pairs (전/후, 추가쌍 강조)
+      M->>P: draw_graph (옵션)
+      M->>R: is_equivalence (재판별)
+    end
+    opt 동치 폐포 실행
+      M->>R: equivalence_closure
+      M->>P: 전/후 출력 및 그래프(옵션)
+      M->>R: is_equivalence / equivalence_classes
+    end
+  end
+```
+
+
 ### 실행 방법
 - 실행하면 대화형으로 다음을 선택합니다.
   1) 입력 방식: 수동 입력 / 예제(even, non_equiv)
