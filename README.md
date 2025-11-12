@@ -86,41 +86,41 @@ graph TD
 런타임 흐름 (Mermaid)
 ```mermaid
 flowchart TD
-  A[Start main.py] --> B{Mode select}
-  B -->|Manual| C[input_matrix + parse_row]
-  B -->|Example| C2[load_example]
+  A[Start main.py] --> B{Mode select};
+  B -->|Manual| C[input_matrix + parse_row];
+  B -->|Example| C2[load_example];
 
-  C --> D[Print original R]
-  C2 --> D
+  C --> D[Print original R];
+  C2 --> D;
 
-  D --> E[print_properties -> is_equivalence]
-  E -->|Equivalent| F[Print equivalence_classes]
-  E -->|Not equivalent| G{Missing properties?}
+  D --> E[print_properties to is_equivalence];
+  E -->|Equivalent| F[Print equivalence_classes];
+  E -->|Not equivalent| G{Missing properties?};
 
-  G -->|Reflexive| H1[reflexive_closure -> compare & recheck]
-  G -->|Symmetric| H2[symmetric_closure -> compare & recheck]
-  G -->|Transitive| H3[transitive_closure -> compare & recheck]
+  G -->|Reflexive| H1[reflexive_closure -> compare and recheck];
+  G -->|Symmetric| H2[symmetric_closure -> compare and recheck];
+  G -->|Transitive| H3[transitive_closure -> compare and recheck];
 
-  H1 --> I{Run equivalence closure?}
-  H2 --> I
-  H3 --> I
+  H1 --> I{Run equivalence closure?};
+  H2 --> I;
+  H3 --> I;
 
-  I -->|Yes| J[equivalence_closure -> compare & recheck]
-  I -->|No| K[End]
+  I -->|Yes| J[equivalence_closure -> compare and recheck];
+  I -->|No| K[End];
 
-  J --> L[Print equivalence classes]
-  L --> K
+  J --> L[Print equivalence classes];
+  L --> K;
 
-  D -.-> M[format_matrix/format_pairs]
-  H1 -.-> M
-  H2 -.-> M
-  H3 -.-> M
-  J  -.-> M
-  D -.-> N[draw_graph (optional)]
-  H1 -.-> N
-  H2 -.-> N
-  H3 -.-> N
-  J  -.-> N
+  D -.-> M[format_matrix and format_pairs];
+  H1 -.-> M;
+  H2 -.-> M;
+  H3 -.-> M;
+  J -.-> M;
+  D -.-> N[draw_graph optional];
+  H1 -.-> N;
+  H2 -.-> N;
+  H3 -.-> N;
+  J -.-> N;
 ```
 
 시퀀스 다이어그램 (Mermaid)
