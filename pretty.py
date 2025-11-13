@@ -18,12 +18,6 @@ def format_matrix(matrix: Matrix, elements: List[int]) -> str:
     return "\n".join(lines)
 
 
-"""
-관계쌍 변환 유틸은 relations.to_pairs를 사용하세요.
-본 모듈은 포매팅 및 시각화 유틸만 유지합니다.
-"""
-
-
 def format_pairs(
     pairs: Iterable[Tuple[int, int]],
     highlight: Optional[Set[Tuple[int, int]]] = None,

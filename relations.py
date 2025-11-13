@@ -1,8 +1,6 @@
 from typing import List, Tuple, Dict, Set
 
-
 Matrix = List[List[int]]
-
 
 def is_reflexive(matrix: Matrix) -> bool:
     n = len(matrix)
